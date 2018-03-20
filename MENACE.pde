@@ -4,6 +4,7 @@ int board [][] = new int [3][3]; // Game board 3x3 array
 int cellWidth, cellHeight;       // Cell size computed from window size
 int player = 1;
 
+//Called upon program start
 void setup() {
   size (800, 800);
   rectMode(CORNER);
@@ -19,6 +20,7 @@ void setup() {
   clearBoard();
 }
 
+//Updates during program run
 void draw() {
   background(255);
   drawBoard();
