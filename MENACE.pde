@@ -1,14 +1,17 @@
+import java.util.*;
+
 // Global variables
-ArrayList<Box> boxes;
 int board [][] = new int [3][3]; // Game board 3x3 array
 int cellWidth, cellHeight;       // Cell size computed from window size
 int player = 1;
+Cabinet cab;
 
 //Called upon program start
 void setup() {
   size (800, 800);
   rectMode(CORNER);
   ellipseMode(CORNER);
+  cab = new Cabinet();
   // Divide window in 3 by 3 cells
 
   //cellWidth = width / 3; 
@@ -46,6 +49,7 @@ void clearBoard() {
   for (int row=0; row<3; row++)
     for (int col=0; col<3; col++)
       board[row][col] = 0;
+   //cab.updateBoxes();
 }
 
 void drawBoard() {
@@ -75,8 +79,8 @@ void drawCell(int row, int col) {
 void playerMove() {
   //Computer move
   if (player == 1) {
-    
-    board[1][1] = player;
+    Bead bead = cab.pickBox(board).pickBead();
+    board[bead.row][bead.col] = player;
     player = oppositePlayer();
   }
   //Human move
@@ -114,6 +118,59 @@ boolean rowFilled(int row) {
   return true;
 }
 
+//One full MENACE Macine filled with boxes
+class Cabinet {
+  //Boxes in this Cabinet
+  ArrayList<Box> boxes;
+  //Boxes chosen in given game
+  ArrayList<Box> picked;
+  
+  Cabinet() {
+    boxes = new ArrayList<Box>();
+    picked = new ArrayList<Box>();
+  }
+
+  //Searches arraylist for box with face
+  //If not found, create new box
+  //Afterwards, add to picked
+  Box pickBox(int[][] face) {
+    if (boxes.size() > 0) {
+      for (Box box : boxes) {
+        Box tempBox = new Box(box.face);
+        //Check all rotations of given box
+        for (int k = 0; k <= 4; k++) {
+          if (Arrays.deepEquals(tempBox.face, face)) {
+            picked.add(box);
+            return box;
+          }
+          tempBox = tempBox.rotated();
+        }
+      }
+    }
+    //Box not found, create new one and add to list
+    Box newBox = new Box(face);
+    boxes.add(newBox);
+    picked.add(newBox);
+    return newBox;
+  }
+
+  //Update all boxes picked, then clear picked ArrayList
+  void updateBoxes(int winstatus) {
+    for (Box pick : picked) {
+      for (Box box : boxes) {
+        if (Arrays.deepEquals(pick.face, box.face)) {
+          box = pick;
+          box.update(winstatus);
+          break;
+        }
+      }
+    }
+    //Empty picked ArrayList
+    picked.clear();
+  }
+}
+
+//A matchbox filled with position beads
 class Box {
   //Board face of this box, unique
   int[][] face;
@@ -121,9 +178,10 @@ class Box {
   ArrayList<Bead> beads;
   //Position of bead picked from this box, used for learning
   int pickPos;
-  
+
   Box(int[][] board) {
     face = board;
+    beads = new ArrayList<Bead>();
     generate();
   }
 
@@ -131,7 +189,7 @@ class Box {
   private void generate() {
     //Iterate through face board to locate empty spots
     for (int i = 0; i < face.length; i++) {
-      for (int j = 0; j < face[i].length; j++) {
+      for (int j = 0; j < face[0].length; j++) {
         //Add 10 beads to list for each empty spot
         if (face[i][j] == 0) { 
           for (int num = 0; num < 10; num++) {
@@ -142,14 +200,14 @@ class Box {
       }
     }
   }
-  
+
   //Picks a random bead from this box and save position
-  Bead getBead() {
+  Bead pickBead() {
     float index = random(beads.size());
     pickPos = (int) index;
     return beads.get((int)index);
   }
-  
+
   //Returns a rotated version of this box
   //Used to minmize created boxes
   //Will re-generate beads for this temp box
@@ -168,26 +226,26 @@ class Box {
     Box rotBox = new Box(temp);
     return rotBox;
   }
-  
+
   //Updates beads contents based on win
   //  0 is tie, 1 is computer win, -1 is player win
   void update(int winStatus) {
     switch(winStatus) {
       //Lose, remove bead if beads exist
-      case -1:
-      if(beads.size() == 0){
+    case -1:
+      if (beads.size() == 0) {
         break;
       }
       beads.remove(pickPos);
       break;
-      
+
       //Win, add two of that beads
-      case 1:
+    case 1:
       beads.add(beads.get(pickPos));
       beads.add(beads.get(pickPos));
-      
+
       //Tie, add one of that bead
-      default:
+    default:
       beads.add(beads.get(pickPos));
 
       break;
@@ -195,6 +253,7 @@ class Box {
   }
 }
 
+//Position tracking bead
 class Bead {
   int row;
   int col;
