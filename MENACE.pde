@@ -6,6 +6,12 @@ int cellWidth, cellHeight;       // Cell size computed from window size
 int player = 1;
 Cabinet cab;
 
+//Variables for wins, loses, and draws
+int wins = 0;
+int loses = 0;
+int draws = 0;
+    
+
 //Called upon program start
 void setup() {
   size (800, 800);
@@ -93,6 +99,7 @@ void playerMove() {
     }
     if (board[row][col] == 0) {
       board[row][col] = player;
+      System.out.print(board[row][col]);
       player = oppositePlayer();
     }
   }
@@ -108,6 +115,7 @@ boolean boardFilled() {
     if (!rowFilled(row))
       return false;
   }
+  draws++;
   return true;
 }
 
