@@ -3,14 +3,9 @@ import java.util.*;
 // Global variables
 int board [][] = new int [3][3]; // Game board 3x3 array
 int cellWidth, cellHeight;       // Cell size computed from window size
-int player = 1;
+int player = 1;            
+int wins, losses, draws;
 Cabinet cab;
-
-//Variables for wins, loses, and draws
-int wins = 0;
-int loses = 0;
-int draws = 0;
-    
 
 //Called upon program start
 void setup() {
@@ -18,10 +13,10 @@ void setup() {
   rectMode(CORNER);
   ellipseMode(CORNER);
   cab = new Cabinet();
-  // Divide window in 3 by 3 cells
-
-  //cellWidth = width / 3; 
-  //cellHeight = height / 3;
+  
+  wins = 0;
+  losses = 0;
+  draws = 0;
 
   //New Dimension gives room for more data and buttons
   cellWidth = 400/3;
@@ -33,8 +28,9 @@ void setup() {
 void draw() {
   background(255);
   drawBoard();
-  if (boardFilled())
+  if (boardFilled() || getWin() != 0) {
     drawGameOver();
+  }
 }
 
 void drawGameOver() {
@@ -45,17 +41,21 @@ void drawGameOver() {
 }
 
 void mouseClicked() {
-  if (boardFilled())
+  if (boardFilled() || getWin() != 0) {
+    System.out.println("WIN: " + getWin());
     clearBoard();
-  else
+  } else
     playerMove();
 }
 
 void clearBoard() {
+  //Set all cells to empty val
   for (int row=0; row<3; row++)
     for (int col=0; col<3; col++)
       board[row][col] = 0;
-   //cab.updateBoxes();
+  //Reset Player
+  player = 1;
+  //cab.updateBoxes();
 }
 
 void drawBoard() {
@@ -99,7 +99,6 @@ void playerMove() {
     }
     if (board[row][col] == 0) {
       board[row][col] = player;
-      System.out.print(board[row][col]);
       player = oppositePlayer();
     }
   }
@@ -115,7 +114,6 @@ boolean boardFilled() {
     if (!rowFilled(row))
       return false;
   }
-  draws++;
   return true;
 }
 
@@ -126,13 +124,67 @@ boolean rowFilled(int row) {
   return true;
 }
 
+//Returns 1 if computer wins
+//Return -1 if player wins
+//Returns 0 if tie or no win yet
+int getWin() {
+  //Check rows
+  for (int i = 0; i < 3; i++) {
+    int last = board[i][0];
+    for (int j = 0; j < 3; j++) {
+      //Empty spot or conflict, go to next row
+      if (board[i][j] == 0 || board[i][j] != last) {
+        break;
+      }
+      //update last
+      last = board[i][j];
+      //Get win if found
+      if (j == 2) {
+        if (board[i][j] == 1) {
+          return 1;
+        } else return -1;
+      }
+    }
+  }
+  //Check columns
+  for (int j = 0; j < 3; j++) {
+    int last = board[0][j];
+    for (int i = 0; i < 3; i++) {
+      //Empty spot or conflict, go to next row
+      if (board[i][j] == 0 || board[i][j] != last) {
+        break;
+      }
+      //update last
+      last = board[i][j];
+      //Get win if found
+      if (i == 2) {
+        if (board[i][j] == 1) {
+          return 1;
+        } else return -1;
+      }
+    }
+  }
+  //Check diagnols
+  if (board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[1][1] != 0) {
+    if (board[1][1] == 1) {
+      return 1;
+    } else return -1;
+  }
+  if (board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[1][1] != 0) {
+    if (board[1][1] == 1) {
+      return 1;
+    } else return -1;
+  }
+  return 0;
+}
+
 //One full MENACE Macine filled with boxes
 class Cabinet {
   //Boxes in this Cabinet
   ArrayList<Box> boxes;
   //Boxes chosen in given game
   ArrayList<Box> picked;
-  
+
   Cabinet() {
     boxes = new ArrayList<Box>();
     picked = new ArrayList<Box>();
@@ -144,12 +196,21 @@ class Cabinet {
   Box pickBox(int[][] face) {
     if (boxes.size() > 0) {
       for (Box box : boxes) {
-        Box tempBox = new Box(box.face);
+        Box tempBox = new Box(box.face, box.beads);
         //Check all rotations of given box
         for (int k = 0; k <= 4; k++) {
           if (Arrays.deepEquals(tempBox.face, face)) {
-            picked.add(box);
-            return box;
+            picked.add(tempBox);
+            System.out.println("FOUND BOX");
+            for (int i = 0; i < 3; i++) {
+              for (int j = 0; j < 3; j++) {
+                System.out.print(tempBox.face[i][j] + " ");
+              }
+              System.out.println();
+            }
+            System.out.println();
+
+            return tempBox;
           }
           tempBox = tempBox.rotated();
         }
@@ -193,6 +254,11 @@ class Box {
     generate();
   }
 
+  Box(int[][] board, ArrayList<Bead> beads) {
+    face = board;
+    this.beads = beads;
+  }
+
   //Create beads for this box
   private void generate() {
     //Iterate through face board to locate empty spots
@@ -204,6 +270,7 @@ class Box {
             Bead bead = new Bead(i, j);
             beads.add(bead);
           }
+          System.out.println("Added Bead: [" + i + "," + j + "]");
         }
       }
     }
@@ -213,6 +280,9 @@ class Box {
   Bead pickBead() {
     float index = random(beads.size());
     pickPos = (int) index;
+    //Print Bead
+    System.out.println(beads.get((int)index).row + " , "
+      + beads.get((int)index).col);
     return beads.get((int)index);
   }
 
