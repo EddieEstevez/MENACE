@@ -26,6 +26,7 @@ void setup() {
 
 //Updates during program run
 void draw() {
+  setupStatsBar()
   background(255);
   drawBoard();
   if (boardFilled() || getWin() != 0) {
@@ -73,13 +74,14 @@ void clearBoard() {
 }
 
 void drawBoard() {
-  for (int row=0; row<3; row++)
-    for (int col=0; col<3; col++)
+  for (int row=0; row<3; row++) {
+    for (int col=0; col<3; col++) {
       drawCell(row, col);
+    }
+  }
 }
 
 void drawCell(int row, int col) {
-
   noFill();
   stroke(0);
   rect (col * cellWidth, row * cellHeight, cellWidth, cellHeight);
@@ -93,6 +95,13 @@ void drawCell(int row, int col) {
     line((col+1) * cellWidth, row * cellHeight, col * cellWidth, (row+1) * cellHeight);
     break;
   }
+}
+
+void setupStatsBar() {
+  System.out.print("I hope this works");
+  fill(0, 102, 153);
+  rect(width/2, height/2 , 100, 100);
+  text("TEST", 500, 20);
 }
 
 
