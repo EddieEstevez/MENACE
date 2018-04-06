@@ -26,19 +26,19 @@ void setup() {
 
 //Updates during program run
 void draw() {
-  setupStatsBar()
-  background(255);
+  background(240, 255, 255);
   drawBoard();
   if (boardFilled() || getWin() != 0) {
     drawGameOver();
   }
+  setupStatsBar();
 }
 
 void drawGameOver() {
   fill(0, 102, 153);
-  textSize(width / 7);
+  textSize(width / 12);
   textAlign(CENTER, CENTER);
-  text("Game Over!", width / 2, height / 2);
+  text("Game Over!", width / 4, height / 4);
 }
 
 void mouseClicked() {
@@ -98,10 +98,47 @@ void drawCell(int row, int col) {
 }
 
 void setupStatsBar() {
-  System.out.print("I hope this works");
-  fill(0, 102, 153);
-  rect(width/2, height/2 , 100, 100);
-  text("TEST", 500, 20);
+  textSize(50);
+  textAlign(LEFT, BASELINE);
+  float WLratio = 0.00;
+  int gameC = (wins + losses + draws);
+  if (gameC != 0) {
+    WLratio = (float) wins/gameC;
+  }
+  int space = 60;
+  fill(0, 203, 255);
+  rect(500, 10 , 250, height-25, 25);
+  fill(0);
+  text("Games", 510, space);
+  space = space + 60;
+  text("Played", 510, space);
+  fill(255);
+  space = space + 60;
+  text((wins + losses + draws), 560, space);
+  fill(0);
+  space = space + 60;
+  text("AI Wins", 510, space);
+  fill(255);
+  space = space + 60;
+  text(wins, 560, space);
+  fill(0);
+  space = space + 60;
+  text("AI Losses", 510, space);
+  fill(255);
+  space = space + 60;
+  text(losses, 560, space);
+  fill(0);
+  space = space + 60;
+  text("Draws", 510, space);
+  fill(255);
+  space = space + 60;
+  text(draws, 560, space);
+  fill(0);
+  space = space + 60;
+  text("W/L Ratio", 510, space);
+  fill(255);
+  space = space + 60;
+  text(WLratio, 560, space);
 }
 
 
