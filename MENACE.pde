@@ -3,7 +3,7 @@ import java.util.*;
 // Global variables
 int board [][] = new int [3][3]; // Game board 3x3 array
 int cellWidth, cellHeight;       // Cell size computed from window size
-int player = 1;            
+int player = 1;
 int wins, losses, draws;
 Cabinet cab;
 
@@ -42,7 +42,21 @@ void drawGameOver() {
 
 void mouseClicked() {
   if (boardFilled() || getWin() != 0) {
-    System.out.println("WIN: " + getWin());
+    //Update boxes according to win status
+    cab.update(getWin());
+    //Update win/lose/draw counts, where wins are AI wins
+    switch(getWin()) {
+      case 0:
+        draws++;
+        break;
+      case 1:
+        wins++;
+        break;
+      case -1:
+        losses++;
+        break;
+    }
+    System.out.println("WINS: " + wins + " LOSSES: " + losses + " DRAWS: " + draws);
     clearBoard();
   } else
     playerMove();
@@ -85,7 +99,25 @@ void drawCell(int row, int col) {
 void playerMove() {
   //Computer move
   if (player == 1) {
-    Bead bead = cab.pickBox(board).pickBead();
+    Box pickedBox = cab.pickBox(board);
+    //Create temporary box for use of rotation checking
+    int[][] newFace = new int[pickedBox.face.length][];
+    for (int r = 0; r < pickedBox.face.length; r++) {
+        newFace[r] = pickedBox.face[r].clone();
+    }
+    Box tempBox = new Box(newFace);
+    
+    //Number of times rotated
+    int rotNum = 0;
+    for(int k = 0; k <= 3; k++) {
+      if(Arrays.deepEquals(tempBox.face, board)) {
+        rotNum = k;
+        break;
+      }
+      else tempBox.rotate();
+    }
+    //Get bead using rotated board state
+    Bead bead = pickedBox.pickBead().rotate(rotNum);
     board[bead.row][bead.col] = player;
     player = oppositePlayer();
   }
@@ -100,6 +132,9 @@ void playerMove() {
     if (board[row][col] == 0) {
       board[row][col] = player;
       player = oppositePlayer();
+      //Automatically have computer play
+      if(getWin() != -1)
+        playerMove();
     }
   }
 }
@@ -212,19 +247,23 @@ class Cabinet {
 
             return tempBox;
           }
-          tempBox = tempBox.rotated();
+          tempBox.rotate();
         }
       }
     }
     //Box not found, create new one and add to list
-    Box newBox = new Box(face);
+    int[][] newFace = new int[face.length][];
+    for (int r = 0; r < face.length; r++) {
+        newFace[r] = face[r].clone();
+    }
+    Box newBox = new Box(newFace);
     boxes.add(newBox);
     picked.add(newBox);
     return newBox;
   }
 
   //Update all boxes picked, then clear picked ArrayList
-  void updateBoxes(int winstatus) {
+  void update(int winstatus) {
     for (Box pick : picked) {
       for (Box box : boxes) {
         if (Arrays.deepEquals(pick.face, box.face)) {
@@ -286,11 +325,9 @@ class Box {
     return beads.get((int)index);
   }
 
-  //Returns a rotated version of this box
+  //Rotates this box clockwise 90 degrees
   //Used to minmize created boxes
-  //Will re-generate beads for this temp box
-  //Must ensure to use original for bead checking
-  Box rotated() {
+  void rotate() {
     int[][] temp = new int[3][3];
     temp[0][0] = face[2][0];
     temp[0][1] = face[1][0];
@@ -301,8 +338,7 @@ class Box {
     temp[2][0] = face[2][2];
     temp[2][1] = face[1][2];
     temp[2][2] = face[0][2];
-    Box rotBox = new Box(temp);
-    return rotBox;
+    this.face = temp;
   }
 
   //Updates beads contents based on win
@@ -338,5 +374,50 @@ class Bead {
   Bead(int row, int col) {
     this.row = row;
     this.col = col;
+  }
+  
+  //Returns a rotated version of this bead
+  //Used when current board is a rotated version of given box
+  //Rotates a temp bead to correct position for X / O placement only
+  Bead rotate(int times) {
+    
+    Bead temp = new Bead(this.row,this.col);
+    //If center, no rotation needed
+    if(row == 1 && col == 1) {
+      return temp;
+    }
+    
+    //Rotate bead 
+    for(int k = 0; k < times; k++) {
+      if(temp.row == 0) {
+        if(temp.col == 0)
+          temp.col = 2;
+        else if(temp.col == 1) {
+          temp.col = 2;
+          temp.row = 1;
+        }
+        else temp.row = 2;
+      }
+      else if(temp.row == 1) {
+        if(temp.col == 0) {
+          temp.row = 0;
+          temp.col = 1;
+        }
+        else {
+          temp.row = 2;
+          temp.col = 1;
+        }
+      }
+      else {
+        if(temp.col == 0)
+          temp.row = 0;
+        else if(temp.col == 1) {
+          temp.row = 1;
+          temp.col = 0;
+        }
+        else temp.col = 0;
+      }
+    }
+    return temp;
   }
 }
