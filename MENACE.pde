@@ -97,6 +97,39 @@ void drawCell(int row, int col) {
   }
 }
 
+void colorBoard(Box box, int rot) {
+  int total = box.beads.size();
+  for (int row = 0; row < 3; row++) {
+    for (int col = 0; col < 3; col++) {
+      //Empty Square
+      if (box.face[row][col] == 0) {
+        int count = 0;
+        //Count beads that match this square
+        for (Bead bead : box.beads) {
+          if (bead.row == row && bead.col == col) {
+            count++;
+          }
+        }
+        double ratio = (double)count/total;
+        //Get green
+        int g = (int)(ratio * 255);
+        //Get red
+        int r = 255 - g;
+        //Get actual row and col of board and color
+        Bead tempBead = new Bead(row, col);
+        tempBead = tempBead.rotate(rot);
+        colorCell(tempBead.row, tempBead.col, r, g);
+      }
+    }
+  }
+}
+
+void colorCell(int row, int col, int r, int g) {
+  fill(r, g, 0);
+  rect (col * cellWidth, row * cellHeight, cellWidth, cellHeight);
+  noFill();
+}
+
 void setupStatsBar() {
   textSize(50);
   textAlign(LEFT, BASELINE);
@@ -149,19 +182,25 @@ void playerMove() {
     //Create temporary box for use of rotation checking
     int[][] newFace = new int[pickedBox.face.length][];
     for (int r = 0; r < pickedBox.face.length; r++) {
-        newFace[r] = pickedBox.face[r].clone();
+      newFace[r] = pickedBox.face[r].clone();
     }
     Box tempBox = new Box(newFace);
-    
-    //Number of times rotated
+
+    //Get number of times rotated
     int rotNum = 0;
-    for(int k = 0; k <= 3; k++) {
-      if(Arrays.deepEquals(tempBox.face, board)) {
+    for (int k = 0; k <= 3; k++) {
+      if (Arrays.deepEquals(tempBox.face, board)) {
         rotNum = k;
         break;
-      }
-      else tempBox.rotate();
+      } else tempBox.rotate();
     }
+
+    //Color board based on chances computer will pick it
+    colorBoard(pickedBox, rotNum);
+
+    //Wait so user can see, replace with button to click
+
+
     //Get bead using rotated board state
     Bead bead = pickedBox.pickBead().rotate(rotNum);
     board[bead.row][bead.col] = player;
@@ -179,8 +218,28 @@ void playerMove() {
       board[row][col] = player;
       player = oppositePlayer();
       //Automatically have computer play
-      if(getWin() != -1)
-        playerMove();
+      if (getWin() != -1) {
+        Box pickedBox = cab.pickBox(board);
+        //Create temporary box for use of rotation checking
+        int[][] newFace = new int[pickedBox.face.length][];
+        for (int r = 0; r < pickedBox.face.length; r++) {
+          newFace[r] = pickedBox.face[r].clone();
+        }
+        Box tempBox = new Box(newFace);
+
+        //Get number of times rotated
+        int rotNum = 0;
+        for (int k = 0; k <= 3; k++) {
+          if (Arrays.deepEquals(tempBox.face, board)) {
+            rotNum = k;
+            break;
+          } else tempBox.rotate();
+        }
+
+        //Color board based on chances computer will pick it
+        colorBoard(pickedBox, rotNum);
+      }
+      //  playerMove();
     }
   }
 }
@@ -217,7 +276,7 @@ int getWin() {
       if (board[i][j] == 0 || board[i][j] != last) {
         break;
       }
-      //update last
+      //Update last
       last = board[i][j];
       //Get win if found
       if (j == 2) {
@@ -235,7 +294,7 @@ int getWin() {
       if (board[i][j] == 0 || board[i][j] != last) {
         break;
       }
-      //update last
+      //Update last
       last = board[i][j];
       //Get win if found
       if (i == 2) {
@@ -394,6 +453,8 @@ class Box {
       //Lose, remove bead if beads exist
     case -1:
       if (beads.size() == 0) {
+        //Regenerate beads if box is empty
+        generate();
         break;
       }
       beads.remove(pickPos);
@@ -403,9 +464,10 @@ class Box {
     case 1:
       beads.add(beads.get(pickPos));
       beads.add(beads.get(pickPos));
+      break;
 
       //Tie, add one of that bead
-    default:
+    case 0:
       beads.add(beads.get(pickPos));
 
       break;
