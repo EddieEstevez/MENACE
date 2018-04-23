@@ -32,6 +32,7 @@ void draw() {
     drawGameOver();
   }
   setupStatsBar();
+  setupMatchBoxes();
 }
 
 void drawGameOver() {
@@ -172,6 +173,13 @@ void setupStatsBar() {
   fill(255);
   space = space + 60;
   text(WLratio, 560, space);
+}
+
+void setupMatchBoxes() {
+  fill(#C34A4A);
+  for(int i = 0; i <= 3; i++) {
+    rect(10 + (110 * i), 700, 100, 100);
+  }
 }
 
 
