@@ -43,6 +43,7 @@ void drawGameOver() {
 }
 
 void mouseClicked() {
+  if (mouseX> 0 && mouseX<800 && mouseY>0 && mouseY<800) {
   if (boardFilled() || getWin() != 0) {
     //Update boxes according to win status
     cab.update(getWin());
@@ -62,6 +63,7 @@ void mouseClicked() {
     clearBoard();
   } else
     playerMove();
+  }
 }
 
 void clearBoard() {
@@ -177,9 +179,10 @@ void setupStatsBar() {
 
 void setupMatchBoxes() {
   fill(#C34A4A);
-  for(int i = 0; i <= 3; i++) {
-    rect(10 + (110 * i), 700, 100, 100);
-  }
+  rect(10 + (110 * 3), 700, 100, 100);
+  textSize(30);
+  fill(255);
+  text("See All Boxes", 10 + (110 * 3), 700, 100, 100);
 }
 
 
