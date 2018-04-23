@@ -493,7 +493,8 @@ class Box {
         generate();
         break;
       }
-      beads.remove(pickPos);
+      if(pickPos < beads.size())
+        beads.remove(pickPos);
       break;
 
       //Win, add two of that beads
