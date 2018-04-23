@@ -2,6 +2,7 @@ import java.util.*;
 
 // Global variables
 int board [][] = new int [3][3]; // Game board 3x3 array
+Color cBoard [][] = new Color[3][3]; // Color values for board
 int cellWidth, cellHeight;       // Cell size computed from window size
 int player = 1;
 int wins, losses, draws;
@@ -9,6 +10,9 @@ Cabinet cab;
 
 //Called upon program start
 void setup() {
+  for(Color[] row : cBoard) {
+    Arrays.fill(row, new Color(255,255,255));
+  }
   size (800, 800);
   rectMode(CORNER);
   ellipseMode(CORNER);
@@ -90,6 +94,15 @@ void drawCell(int row, int col) {
   rect (col * cellWidth, row * cellHeight, cellWidth, cellHeight);
 
   switch (board[row][col]) {
+  case 0:
+    // If empty square and computer move, color squares based on probability
+    if(player == 1) {
+      Color c = cBoard[row][col];
+      fill(c.r, c.g, c.b);
+      rect (col * cellWidth, row * cellHeight, cellWidth, cellHeight);
+      noFill();
+    }
+    break;
   case 1:
     ellipse(col * cellWidth, row * cellHeight, cellWidth, cellHeight);
     break;
@@ -128,9 +141,21 @@ void colorBoard(Box box, int rot) {
 }
 
 void colorCell(int row, int col, int r, int g) {
-  fill(r, g, 0);
-  rect (col * cellWidth, row * cellHeight, cellWidth, cellHeight);
-  noFill();
+  //fill(r, g, 0);
+  //rect (col * cellWidth, row * cellHeight, cellWidth, cellHeight);
+  //noFill();
+  cBoard[row][col] = new Color(r,g,0);
+}
+
+class Color {
+  int r;
+  int g;
+  int b;
+  public Color(int r, int g, int b) {
+    this.r = r;
+    this.g = g;
+    this.b = b;
+  }
 }
 
 void setupStatsBar() {
