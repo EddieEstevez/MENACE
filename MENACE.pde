@@ -39,13 +39,6 @@ void draw() {
   setupMatchBoxes();
 }
 
-void drawGameOver() {
-  fill(0, 102, 153);
-  textSize(width / 12);
-  textAlign(CENTER, CENTER);
-  text("Game Over!", width / 4, height / 4);
-}
-
 void mouseClicked() {
   if (mouseX> 0 && mouseX<800 && mouseY>0 && mouseY<800) {
   if (boardFilled() || getWin() != 0) {
@@ -70,6 +63,24 @@ void mouseClicked() {
   }
 }
 
+void drawGameOver() {
+  fill(0, 102, 153);
+  textSize(width / 12);
+  textAlign(CENTER, CENTER);
+  switch(getWin()) {
+    case 0:
+      text("TIE!", width / 4, height / 4);
+      break;
+    case 1:
+      text("MENACE WINS!", width / 4, height / 4);
+      break;
+    case -1:
+      text("YOU WIN!", width / 4, height / 4);
+      break;
+  }
+}
+
+//Clears array of player and computer moves, resets player variable
 void clearBoard() {
   //Set all cells to empty val
   for (int row=0; row<3; row++)
@@ -80,6 +91,7 @@ void clearBoard() {
   //cab.updateBoxes();
 }
 
+//Draws playing board
 void drawBoard() {
   for (int row=0; row<3; row++) {
     for (int col=0; col<3; col++) {
@@ -88,6 +100,7 @@ void drawBoard() {
   }
 }
 
+//Draws one individual cell in the board
 void drawCell(int row, int col) {
   noFill();
   stroke(0);
@@ -113,6 +126,7 @@ void drawCell(int row, int col) {
   }
 }
 
+//Colors the playing board based on computer probability
 void colorBoard(Box box, int rot) {
   int total = box.beads.size();
   for (int row = 0; row < 3; row++) {
