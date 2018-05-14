@@ -113,28 +113,29 @@ void playerMove() {
     if (board[row][col] == 0) {
       board[row][col] = player;
       player = oppositePlayer();
+      
       //Automatically have computer play
-      if (getWin() != -1) {
-        Box pickedBox = cab.pickBox(board);
-        //Create temporary box for use of rotation checking
-        int[][] newFace = new int[pickedBox.face.length][];
-        for (int r = 0; r < pickedBox.face.length; r++) {
-          newFace[r] = pickedBox.face[r].clone();
-        }
-        Box tempBox = new Box(newFace);
+      //if (getWin() != -1) {
+      //  Box pickedBox = cab.pickBox(board);
+      //  //Create temporary box for use of rotation checking
+      //  int[][] newFace = new int[pickedBox.face.length][];
+      //  for (int r = 0; r < pickedBox.face.length; r++) {
+      //    newFace[r] = pickedBox.face[r].clone();
+      //  }
+      //  Box tempBox = new Box(newFace);
 
-        //Get number of times rotated
-        int rotNum = 0;
-        for (int k = 0; k <= 3; k++) {
-          if (Arrays.deepEquals(tempBox.face, board)) {
-            rotNum = k;
-            break;
-          } else tempBox.rotate();
-        }
+      //  //Get number of times rotated
+      //  int rotNum = 0;
+      //  for (int k = 0; k <= 3; k++) {
+      //    if (Arrays.deepEquals(tempBox.face, board)) {
+      //      rotNum = k;
+      //      break;
+      //    } else tempBox.rotate();
+      //  }
 
-        //Color board based on chances computer will pick it
-        colorBoard(pickedBox, rotNum);
-      }
+      //  //Color board based on chances computer will pick it
+      //  colorBoard(pickedBox, rotNum);
+      //}
       //  playerMove();
     }
   }
