@@ -67,21 +67,55 @@ void setup() {
 //Updates during program run
 void draw() {
   background(240, 255, 255);
+  stroke(0);
+  line(325, 450, 325, 775);
+  if(page1) {
   drawBoard();
   if (boardFilled() || getWin() != 0) {
     drawGameOver();
   }
+ // createMatchBox();
   setupStatsBar();
-  setupMatchBoxes();
+  textAlign(CENTER, CENTER);
+  setupMatchBoxes(3, "What is this?", 25);
+  setupMatchBoxes(3, "Info for Nerds", 25, 2);
+  textAlign(CENTER, TOP);
+  setupMatchBoxes(3, "Restart Game", 20, 3);
+  }
+  if(page1) {
+ nextBoxGone = false;
+ firstS = "aka Machine Educable Noughts And Crosses Engine.";
+ secondS = "It's a great representation of basic machine learning and Artificial Intelligence. By playing the tic tac toe game, you are training the virtual MENACE machine.";
+  };
+  if(page2) { 
+  background(240, 255, 255);
+  fill(0);
+  textSize(width / 12);
+  textAlign(LEFT);
+  text("THE MENACE MACHINE!", 10, 100);
+  fill(56, 121, 226);
+  textSize(width / 20);
+  textAlign(CENTER);
+  text(firstS, 10 ,150, 800, 800);
+  text(secondS, 10 ,secondSpace, 800, 800);
+  setupMatchBoxes(2, "Back to Main Page", 40);
+  if (!nextBoxGone) {
+  setupMatchBoxes(4, "Next", 40);
+  }
+  }
+drawVisualMatchBoxes();
 }
 
 void mouseClicked() {
+  if(page1) {
+    runOnce = true;
+    secondSpace = 275;
   if (mouseX> 0 && mouseX<800 && mouseY>0 && mouseY<800) {
-    if (boardFilled() || getWin() != 0) {
-      //Update boxes according to win status
-      cab.update(getWin());
-      //Update win/lose/draw counts, where wins are AI wins
-      switch(getWin()) {
+  if (boardFilled() || getWin() != 0) {
+    //Update boxes according to win status
+    cab.update(getWin());
+    //Update win/lose/draw counts, where wins are AI wins
+    switch(getWin()) {
       case 0:
         draws++;
         break;
@@ -91,20 +125,15 @@ void mouseClicked() {
       case -1:
         losses++;
         break;
-      }
-      System.out.println("WINS: " + wins + " LOSSES: " + losses + " DRAWS: " + draws);
-      clearBoard();
-    } else
-      playerMove();
+    }
+    System.out.println("WINS: " + wins + " LOSSES: " + losses + " DRAWS: " + draws);
+    clearBoard();
+  } else
+    playerMove();
   }
-}
-
-void setupMatchBoxes() {
-  fill(#C34A4A);
-  rect(10 + (110 * 3), 700, 100, 100);
-  textSize(30);
-  fill(255);
-  text("See All Boxes", 10 + (110 * 3), 700, 100, 100);
+  }
+    pageBoxCode();
+    restartBoxCode();
 }
 
 void playerMove() {

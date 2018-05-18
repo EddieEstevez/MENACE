@@ -36,30 +36,7 @@ void drawBoard() {
 }
 
 //Draws one individual cell in the board
-void drawCell(int row, int col) {
-  noFill();
-  stroke(0);
-  rect (col * cellWidth, row * cellHeight, cellWidth, cellHeight);
 
-  switch (board[row][col]) {
-  case 0:
-    // If empty square and computer move, color squares based on probability
-    if(player == 1) {
-      Color c = cBoard[row][col];
-      fill(c.r, c.g, c.b);
-      rect (col * cellWidth, row * cellHeight, cellWidth, cellHeight);
-      noFill();
-    }
-    break;
-  case 1:
-    ellipse(col * cellWidth, row * cellHeight, cellWidth, cellHeight);
-    break;
-  case 2:
-    line(col * cellWidth, row * cellHeight, (col+1) * cellWidth, (row+1) * cellHeight);
-    line((col+1) * cellWidth, row * cellHeight, col * cellWidth, (row+1) * cellHeight);
-    break;
-  }
-}
 
 void setupStatsBar() {
   textSize(50);

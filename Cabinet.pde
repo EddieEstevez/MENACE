@@ -14,6 +14,8 @@ class Cabinet {
   //If not found, create new box
   //Afterwards, add to picked
   Box pickBox(int[][] face) {
+    String line1, line2, line3;
+line1 = line2 = line3 = "";
     if (boxes.size() > 0) {
       for (Box box : boxes) {
         Box tempBox = new Box(box.face, box.beads);
@@ -25,11 +27,17 @@ class Cabinet {
             for (int i = 0; i < 3; i++) {
               for (int j = 0; j < 3; j++) {
                 System.out.print(tempBox.face[i][j] + " ");
-              }
+               if (i == 0) {
+                  line1 = line1 + tempBox.face[i][j] + " ";
+              } else if (i == 1) {
+                line2 = line2 + tempBox.face[i][j] + " ";
+              } else if (i == 2) {
+                line3 = line3 + tempBox.face[i][j] + " ";
+              };
+              };
               System.out.println();
             }
             System.out.println();
-
             return tempBox;
           }
           tempBox.rotate();
@@ -44,7 +52,24 @@ class Cabinet {
     Box newBox = new Box(newFace);
     boxes.add(newBox);
     picked.add(newBox);
-    return newBox;
+        System.out.println("CREATED BOX");
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        System.out.print(newBox.face[i][j] + " ");
+           if (i == 0) {
+             line1 = line1 + newBox.face[i][j] + " ";
+            } else if (i == 1) {
+             line2 = line2 + newBox.face[i][j] + " ";
+            } else if (i == 2) {
+             line2 = line3 + newBox.face[i][j] + " ";
+           };
+         }
+      System.out.println();
+            }
+      sendFirst(line1);
+      sendSecond(line2);
+      sendThird(line3);
+      return newBox;
   }
 
   //Update all boxes picked, then clear picked ArrayList
