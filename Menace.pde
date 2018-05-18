@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 
 // Global variables
 int board [][] = new int [3][3]; // Game board 3x3 array
@@ -10,14 +11,31 @@ Cabinet cab;
 
 //Called upon program start
 void setup() {
-  for(Color[] row : cBoard) {
-    Arrays.fill(row, new Color(255,255,255));
+  for (Color[] row : cBoard) {
+    Arrays.fill(row, new Color(255, 255, 255));
   }
+
+  //Try to load from cabinet file and create new one
+  try {
+    File cabFile = new File("cab.sav");
+    //Load Cabinet
+    if (cabFile.exists()) {
+      FileInputStream loadFile = new FileInputStream("cab.sav");
+      ObjectInputStream load = new ObjectInputStream(loadFile);
+
+      cab = (Cabinet) load.readObject();
+      load.close();
+    }
+  } 
+  catch (Exception e) {
+    e.printStackTrace();
+  }
+
   size (800, 800);
   rectMode(CORNER);
   ellipseMode(CORNER);
   cab = new Cabinet();
-  
+
   wins = 0;
   losses = 0;
   draws = 0;
@@ -26,6 +44,24 @@ void setup() {
   cellWidth = 400/3;
   cellHeight = 400/3;
   clearBoard();
+
+  Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+    public void run() {
+      System.out.println("SHUTDOWN HOOK; SAVING CABINET");
+      try {
+        //Create save files
+
+        FileOutputStream saveFile = new FileOutputStream("cab.sav");
+        ObjectOutputStream save = new ObjectOutputStream(saveFile);
+        save.writeObject(cab);
+        save.close();
+      } 
+      catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+  , "Shutdown-thread"));
 }
 
 //Updates during program run
@@ -41,11 +77,11 @@ void draw() {
 
 void mouseClicked() {
   if (mouseX> 0 && mouseX<800 && mouseY>0 && mouseY<800) {
-  if (boardFilled() || getWin() != 0) {
-    //Update boxes according to win status
-    cab.update(getWin());
-    //Update win/lose/draw counts, where wins are AI wins
-    switch(getWin()) {
+    if (boardFilled() || getWin() != 0) {
+      //Update boxes according to win status
+      cab.update(getWin());
+      //Update win/lose/draw counts, where wins are AI wins
+      switch(getWin()) {
       case 0:
         draws++;
         break;
@@ -55,11 +91,11 @@ void mouseClicked() {
       case -1:
         losses++;
         break;
-    }
-    System.out.println("WINS: " + wins + " LOSSES: " + losses + " DRAWS: " + draws);
-    clearBoard();
-  } else
-    playerMove();
+      }
+      System.out.println("WINS: " + wins + " LOSSES: " + losses + " DRAWS: " + draws);
+      clearBoard();
+    } else
+      playerMove();
   }
 }
 
@@ -113,30 +149,6 @@ void playerMove() {
     if (board[row][col] == 0) {
       board[row][col] = player;
       player = oppositePlayer();
-      
-      //Automatically have computer play
-      //if (getWin() != -1) {
-      //  Box pickedBox = cab.pickBox(board);
-      //  //Create temporary box for use of rotation checking
-      //  int[][] newFace = new int[pickedBox.face.length][];
-      //  for (int r = 0; r < pickedBox.face.length; r++) {
-      //    newFace[r] = pickedBox.face[r].clone();
-      //  }
-      //  Box tempBox = new Box(newFace);
-
-      //  //Get number of times rotated
-      //  int rotNum = 0;
-      //  for (int k = 0; k <= 3; k++) {
-      //    if (Arrays.deepEquals(tempBox.face, board)) {
-      //      rotNum = k;
-      //      break;
-      //    } else tempBox.rotate();
-      //  }
-
-      //  //Color board based on chances computer will pick it
-      //  colorBoard(pickedBox, rotNum);
-      //}
-      //  playerMove();
     }
   }
 }
