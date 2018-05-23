@@ -81,6 +81,9 @@ void draw() {
   setupMatchBoxes(3, "Info for Nerds", 25, 2);
   textAlign(CENTER, TOP);
   setupMatchBoxes(3, "Restart Game", 20, 3);
+  drawVisualMatchBoxes();
+  fill(#000000);
+  text("<-- The bead will be \n placed inside the \n matchbox with \n this state.", 225, 500);
   }
   if(page1) {
  nextBoxGone = false;
@@ -103,7 +106,9 @@ void draw() {
   setupMatchBoxes(4, "Next", 40);
   }
   }
-drawVisualMatchBoxes();
+    if(page3) { 
+  nerdVisuals();
+  }
 }
 
 void mouseClicked() {
@@ -134,6 +139,7 @@ void mouseClicked() {
   }
     pageBoxCode();
     restartBoxCode();
+    nerdInfoCode();
 }
 
 void playerMove() {

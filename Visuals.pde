@@ -1,6 +1,11 @@
 // Global variables
+int GameCounter = 0;
+float OldGameCounter = 5;
+int prevX, prevY;
+ArrayList<Float> GameCounterArray = new ArrayList<Float>();
 boolean page1 = true;
 boolean page2 = false;
+boolean page3 = false;
 String firstS, secondS;
 int secondSpace = 275;
 int counterPage = 1;
@@ -80,6 +85,62 @@ void pageBoxCode() {
 }
 };
 
+void nerdInfoCode() { 
+    if ((mouseX > 10 + (110 * 3) && mouseX < 110 + (110 * 3) && mouseY > 810 - (110 * 2) && mouseY < 910 - (110 * 2))) { //function highlights the box that the mouse is hovering over
+    page3 = true;
+    page1 = false;
+    System.out.println("Current array list is:"+ GameCounterArray);
+  }
+      if ((mouseX > 10 + (110 * 2) && mouseX < 110 + (110 * 2) && mouseY > 700 && mouseY < 800) && page3) { 
+    page3= false;
+    page1 = true;
+    };
+};
+
+void nerdVisuals() {
+  background(240, 255, 255);
+  fill(0);
+  textSize(width / 12);
+  textAlign(LEFT);
+  text("     WIN/LOSS GRAPH", 10, 75);
+  fill(56, 121, 226);
+  textSize(width / 20);
+  textAlign(CENTER);
+  setupMatchBoxes(2, "Back to Main Page", 40);
+  //set up of the graph
+  strokeWeight(10);
+  line(100, 100, 100, 650);
+  line(100, 650, 650, 650);
+  //get the text
+  fill(#000000);
+  text("Ratio", 50, 650/1.5);
+  strokeWeight(1);
+  text("Number of Games", 550, 700);
+  //draws the line
+  int nextX, nextY;
+  int arraySize = GameCounterArray.size();
+  strokeWeight(5);
+  stroke(#3399ff);
+  nextX = prevX;
+  nextY = prevY;
+  if (arraySize > 1) {
+  for(int i = 0; i < arraySize; i++) { 
+  nextY = (int) (650 - (GameCounterArray.get(i) * 550));
+  nextX = ((550/arraySize) * i) + 100;
+  if (i == 0) {
+    stroke(#000000, 00); 
+  } else {
+    stroke(#3399ff); }
+  line(prevX, prevY, nextX, nextY);
+  stroke(#0066cc);
+  ellipse(nextX, nextY, 10, 10);
+  prevX = nextX;
+  prevY = nextY;
+  };
+  };  
+  strokeWeight(1);
+}
+
 void restartBoxCode() {
   int a, c;
   a = c = 3;
@@ -89,15 +150,25 @@ void restartBoxCode() {
 };
 
 void sendFirst(String line) { 
-one = line;
+one = line + "\n";
 };
 
 void sendSecond(String line) { 
-two = line;
+two = line + "\n";
 };
 
 void sendThird(String line) { 
-three = line;
+three = line + "\n";
+};
+
+String convertNumtoChar(int character) { 
+String newString = "_";
+if (character == 2) {
+  newString = "X"; 
+} else if (character == 1) {
+  newString = "O";
+}
+return newString;
 };
 
 

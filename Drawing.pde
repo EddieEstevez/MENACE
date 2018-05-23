@@ -47,6 +47,7 @@ void setupStatsBar() {
     WLratio = (float) wins/gameC;
   }
   int space = 60;
+  int GameCounter = wins + losses + draws;
   fill(0, 203, 255);
   rect(500, 10 , 250, height-25, 25);
   fill(0);
@@ -55,7 +56,7 @@ void setupStatsBar() {
   text("Played", 510, space);
   fill(255);
   space = space + 60;
-  text((wins + losses + draws), 560, space);
+  text((GameCounter), 560, space);
   fill(0);
   space = space + 60;
   text("AI Wins", 510, space);
@@ -80,6 +81,10 @@ void setupStatsBar() {
   fill(255);
   space = space + 60;
   text(WLratio, 560, space);
+  if (OldGameCounter != GameCounter) { 
+  GameCounterArray.add(WLratio);
+  };
+  OldGameCounter = GameCounter;
 }
 
 class Color {

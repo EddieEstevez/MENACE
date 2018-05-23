@@ -28,16 +28,19 @@ line1 = line2 = line3 = "";
               for (int j = 0; j < 3; j++) {
                 System.out.print(tempBox.face[i][j] + " ");
                if (i == 0) {
-                  line1 = line1 + tempBox.face[i][j] + " ";
+                  line1 = line1 + convertNumtoChar(tempBox.face[i][j]) + " ";
               } else if (i == 1) {
-                line2 = line2 + tempBox.face[i][j] + " ";
+                line2 = line2 + convertNumtoChar(tempBox.face[i][j]) + " ";
               } else if (i == 2) {
-                line3 = line3 + tempBox.face[i][j] + " ";
+                line3 = line3 + convertNumtoChar(tempBox.face[i][j]) + " ";
               };
               };
               System.out.println();
             }
             System.out.println();
+             sendFirst(line1);
+              sendSecond(line2);
+              sendThird(line3);
             return tempBox;
           }
           tempBox.rotate();
@@ -57,11 +60,11 @@ line1 = line2 = line3 = "";
       for (int j = 0; j < 3; j++) {
         System.out.print(newBox.face[i][j] + " ");
            if (i == 0) {
-             line1 = line1 + newBox.face[i][j] + " ";
+             line1 = line1 + convertNumtoChar(newBox.face[i][j]) + " ";
             } else if (i == 1) {
-             line2 = line2 + newBox.face[i][j] + " ";
+             line2 = line2 + convertNumtoChar(newBox.face[i][j]) + " ";
             } else if (i == 2) {
-             line2 = line3 + newBox.face[i][j] + " ";
+             line3 = line3 + convertNumtoChar(newBox.face[i][j]) + " ";
            };
          }
       System.out.println();
