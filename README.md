@@ -1,6 +1,6 @@
 # MENACE
 
-This is project to visualize the MENACE machine
+This is a project to visualize the MENACE machine
  ## How To Run the Program
 This program is written in Java using a program called Processing. A link to the website to download the program is: https://processing.org/
 ## What the Program can do
